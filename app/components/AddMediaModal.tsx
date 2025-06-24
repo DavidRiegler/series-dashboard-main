@@ -41,6 +41,14 @@ export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: A
         return
       }
 
+      if (
+        (formData.rating !== 0 && (isNaN(formData.rating) || formData.rating < 1 || formData.rating > 5))
+      ) {
+        alert("Bitte geben Sie eine Bewertung zwischen 1 und 5 ein.")
+        setLoading(false)
+        return
+      }
+
       const submitData: Partial<MediaItem> = {
         title: formData.title,
         description: formData.description,
@@ -50,7 +58,6 @@ export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: A
         imageUrl: formData.imageUrl,
       }
 
-      // Add type-specific fields
       if (formData.type === "movie") {
         submitData.duration = formData.duration
       } else if (formData.type === "series") {
@@ -95,6 +102,7 @@ export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: A
                 className="form-input"
                 value={formData.title}
                 onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                placeholder={formData.title === "" ? "Title" : ""}
                 required
               />
             </div>
@@ -134,7 +142,7 @@ export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: A
                   className="form-input"
                   value={formData.duration}
                   onChange={(e) => setFormData((prev) => ({ ...prev, duration: e.target.value }))}
-                  placeholder="1h 45m"
+                  placeholder={formData.duration === "" ? "1h 45m" : ""}
                 />
               </div>
             )}
@@ -186,8 +194,16 @@ export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: A
                 <input
                   type="number"
                   className="form-input"
-                  value={formData.pages}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, pages: Number.parseInt(e.target.value) || 0 }))}
+                  value={formData.pages === 0 ? "" : formData.pages}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      pages: e.target.value === "" ? 0 : Number.parseInt(e.target.value)
+                    }))
+                  }
+                  onFocus={e => {
+                    if (e.target.value === "0") e.target.value = "";
+                  }}
                   min="0"
                 />
               </div>
@@ -198,11 +214,21 @@ export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: A
               <input
                 type="number"
                 className="form-input"
-                value={formData.rating}
-                onChange={(e) => setFormData((prev) => ({ ...prev, rating: Number.parseFloat(e.target.value) || 1 }))}
+                value={formData.rating === 0 ? "" : formData.rating}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    rating: e.target.value === "" ? 0 : Number(e.target.value)
+                  }))
+                }}
+                onFocus={e => {
+                  if (e.target.value === "0") e.target.value = "";
+                }}
                 min="1"
                 max="5"
                 step="0.1"
+                placeholder="z.B. 4.5"
+                required
               />
             </div>
 
@@ -213,6 +239,7 @@ export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: A
                 value={formData.description}
                 onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
                 rows={4}
+                placeholder={formData.description === "" ? "Description" : ""}
               />
             </div>
 
