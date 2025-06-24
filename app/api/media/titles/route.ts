@@ -1,8 +1,8 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { collection, getDocs } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const querySnapshot = await getDocs(collection(db, "media"))
     const titles: string[] = []

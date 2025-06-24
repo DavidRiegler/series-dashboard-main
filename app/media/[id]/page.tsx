@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { doc, getDoc, deleteDoc, updateDoc } from "firebase/firestore"
+import Image from "next/image"
 import { db } from "@/lib/firebase"
 import type { MediaItem } from "@/lib/types"
 import { useAuth } from "@/app/components/AuthProvider"
@@ -19,13 +20,7 @@ export default function MediaDetailPage() {
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  useEffect(() => {
-    if (params.id && user) {
-      fetchMediaItem()
-    }
-  }, [params.id, user])
-
-  const fetchMediaItem = async () => {
+  const fetchMediaItem = useCallback(async () => {
     try {
       const docRef = doc(db, "media", params.id as string)
       const docSnap = await getDoc(docRef)
@@ -47,7 +42,13 @@ export default function MediaDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id, router])
+
+  useEffect(() => {
+    if (params.id && user) {
+      fetchMediaItem()
+    }
+  }, [params.id, user, fetchMediaItem])
 
   const handleEdit = () => {
     setEditingItem(item)
@@ -112,7 +113,7 @@ export default function MediaDetailPage() {
     }
   }
 
-  const formatDate = (date: any) => {
+  const formatDate = (date: Date | string | { seconds: number } | null | undefined): string => {
     try {
       if (!date) return "Unknown date"
 
@@ -124,7 +125,7 @@ export default function MediaDetailPage() {
         return new Date(date).toLocaleDateString()
       }
 
-      if (date.seconds) {
+      if (typeof date === "object" && "seconds" in date) {
         return new Date(date.seconds * 1000).toLocaleDateString()
       }
 
@@ -187,7 +188,13 @@ export default function MediaDetailPage() {
           <div className="detail-hero">
             <div className="detail-image-container">
               {item.imageUrl ? (
-                <img src={item.imageUrl || "/placeholder.svg"} alt={item.title} className="detail-image" />
+                <Image
+                  src={item.imageUrl || "/placeholder.svg"}
+                  alt={item.title}
+                  width={300}
+                  height={400}
+                  className="detail-image"
+                />
               ) : (
                 <div className="detail-image-placeholder">{getTypeIcon()}</div>
               )}

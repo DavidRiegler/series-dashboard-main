@@ -2,11 +2,8 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import type { MediaItem } from "@/lib/types"
-import { useAuth } from "./AuthProvider"
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
-import { storage } from "@/lib/firebase"
 
 interface AddMediaModalProps {
   isOpen: boolean
@@ -16,7 +13,6 @@ interface AddMediaModalProps {
 }
 
 export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: AddMediaModalProps) {
-  const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [imagePreview, setImagePreview] = useState<string>(editItem?.imageUrl || "")
   const [formData, setFormData] = useState({
@@ -132,7 +128,7 @@ export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: A
 
             {formData.type === "movie" && (
               <div className="form-group">
-                <label className="form-label">Duration (e.g., "1h 45m")</label>
+                <label className="form-label">Duration (e.g., &quot;1h 45m&quot;)</label>
                 <input
                   type="text"
                   className="form-input"
@@ -234,6 +230,7 @@ export default function AddMediaModal({ isOpen, onClose, onSubmit, editItem }: A
 
             {imagePreview && (
               <div className="image-preview-container">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={imagePreview} 
                   alt="Preview" 

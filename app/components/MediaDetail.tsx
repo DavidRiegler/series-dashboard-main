@@ -1,8 +1,9 @@
 "use client"
 
+import { useEffect } from "react"
+import Image from "next/image"
 import type { MediaItem } from "@/lib/types"
 import { useAuth } from "./AuthProvider"
-import { useEffect } from "react"
 
 interface MediaDetailProps {
   item: MediaItem
@@ -49,7 +50,7 @@ export default function MediaDetail({ item, onEdit, onDelete, onClose }: MediaDe
     }
   }
 
-  const formatDate = (date: any) => {
+  const formatDate = (date: Date | string | { seconds: number } | null | undefined): string => {
     try {
       if (!date) return "Unknown date"
 
@@ -61,7 +62,7 @@ export default function MediaDetail({ item, onEdit, onDelete, onClose }: MediaDe
         return new Date(date).toLocaleDateString()
       }
 
-      if (date.seconds) {
+      if (typeof date === "object" && "seconds" in date) {
         return new Date(date.seconds * 1000).toLocaleDateString()
       }
 
@@ -118,7 +119,14 @@ export default function MediaDetail({ item, onEdit, onDelete, onClose }: MediaDe
           <div className="detail-layout">
             <div className="detail-image-section">
               {item.imageUrl ? (
-                <img src={item.imageUrl || "/placeholder.svg"} alt={item.title} className="detail-image" />
+                <Image 
+                  src={item.imageUrl} 
+                  alt={item.title} 
+                  className="detail-image"
+                  width={400}
+                  height={600}
+                  priority
+                />
               ) : (
                 <div className="detail-image detail-image-placeholder">
                   <span className="placeholder-icon">{getTypeIcon()}</span>

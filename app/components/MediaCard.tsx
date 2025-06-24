@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import type { MediaItem } from "@/lib/types"
 
 interface MediaCardProps {
@@ -51,17 +52,16 @@ export default function MediaCard({ item, onClick }: MediaCardProps) {
   return (
     <div className="card" onClick={() => onClick(item)}>
       {item.imageUrl && !imageError ? (
-        <img 
-          src={item.imageUrl} 
+        <Image
+          src={item.imageUrl}
           alt={item.title}
           className="card-image"
           onLoad={handleImageLoad}
           onError={handleImageError}
           data-loading={imageLoading}
           loading="lazy"
-          // Better image optimization attributes
-          decoding="async"
-          // Provide size hints for better loading
+          width={300}
+          height={400}
           sizes="(max-width: 480px) 120px, (max-width: 768px) 300px, 400px"
         />
       ) : (

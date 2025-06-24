@@ -3,7 +3,7 @@
 import { useAuth } from "./AuthProvider"
 
 interface HeaderProps {
-  // searchQuery und onSearchChange können entfernt werden
+  [key: string]: unknown
 }
 
 export default function Header({}: HeaderProps) {

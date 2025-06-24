@@ -17,7 +17,7 @@ export default function LoginForm() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setError("")
@@ -30,8 +30,12 @@ export default function LoginForm() {
         await register(formData.username, formData.fullName, formData.password)
         setSuccess("Account created successfully! Welcome to EntertainHub!")
       }
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError("An unknown error occurred")
+      }
     } finally {
       setLoading(false)
     }

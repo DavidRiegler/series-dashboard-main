@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser))
-      } catch (error) {
+      } catch {
         localStorage.removeItem("entertainhub_user")
       }
     }

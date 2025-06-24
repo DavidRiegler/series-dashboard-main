@@ -2,10 +2,13 @@ import { type NextRequest, NextResponse } from "next/server"
 import { doc, updateDoc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
     const body = await request.json()
-    const { id } = params
+    const { id } = await context.params
 
     const updateData = {
       ...body,
@@ -21,9 +24,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
-    const { id } = params
+    const { id } = await context.params
     await deleteDoc(doc(db, "media", id))
 
     return NextResponse.json({ success: true })
